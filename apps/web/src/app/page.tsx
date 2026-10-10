@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Activity,
   Radio,
@@ -20,7 +21,20 @@ import {
   BarChart3,
   Flame,
   CheckCircle2,
+  Navigation2,
 } from "lucide-react";
+
+const CleanestRouteMap = dynamic(
+  () => import("../components/CleanestRouteMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[700px] rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 font-mono text-xs animate-pulse">
+        Initializing Mapbox GL JS Spatial Canvas & PostGIS Street Grid...
+      </div>
+    ),
+  }
+);
 
 // Mock data representing the 4 database models
 const INITIAL_SENSOR_NODES = [
@@ -267,7 +281,7 @@ const INITIAL_STREET_GRIDS = [
 ];
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"overview" | "nodes" | "telemetry" | "satellite" | "grid" | "schema">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "routes" | "nodes" | "telemetry" | "satellite" | "grid" | "schema">("overview");
   const [selectedGrid, setSelectedGrid] = useState(INITIAL_STREET_GRIDS[0]);
 
   return (
@@ -332,8 +346,15 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-3">
               <button
+                onClick={() => setActiveTab("routes")}
+                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center space-x-2 transition shadow-lg shadow-emerald-600/30"
+              >
+                <Navigation2 className="h-4 w-4" />
+                <span>Cleanest Route Navigation</span>
+              </button>
+              <button
                 onClick={() => setActiveTab("schema")}
-                className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs flex items-center space-x-2 transition shadow-lg shadow-cyan-600/30"
+                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs flex items-center space-x-2 transition border border-slate-700"
               >
                 <Code2 className="h-4 w-4" />
                 <span>View Schema & SQL</span>
@@ -416,6 +437,17 @@ export default function Home() {
         {/* Tab Navigation */}
         <div className="flex border-b border-slate-800 space-x-2 overflow-x-auto pb-1 text-sm font-medium">
           <button
+            onClick={() => setActiveTab("routes")}
+            className={`px-4 py-2.5 rounded-lg transition whitespace-nowrap flex items-center space-x-2 ${
+              activeTab === "routes"
+                ? "bg-emerald-950/70 text-emerald-400 font-semibold border-b-2 border-emerald-400"
+                : "text-emerald-400/80 hover:text-emerald-300 hover:bg-emerald-950/30"
+            }`}
+          >
+            <Navigation2 className="h-4 w-4 text-emerald-400" />
+            <span>Cleanest Route Navigation (Mapbox GL JS)</span>
+          </button>
+          <button
             onClick={() => setActiveTab("overview")}
             className={`px-4 py-2.5 rounded-lg transition whitespace-nowrap flex items-center space-x-2 ${
               activeTab === "overview"
@@ -482,6 +514,31 @@ export default function Home() {
             <span>Prisma Schema & Migration SQL</span>
           </button>
         </div>
+
+        {/* Tab 0: CLEANEST ROUTE NAVIGATION (MAPBOX GL JS) */}
+        {activeTab === "routes" && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-2">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+                  <Navigation2 className="h-5 w-5 text-emerald-400" />
+                  <span>Cleanest Route Navigation (Mapbox GL JS + PostGIS)</span>
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Evaluates Mapbox route alternatives against the PostGIS <code className="text-emerald-400 font-mono">street_aqi_grid</code> table and highlights the path with the lowest cumulative exposure score in green.
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs px-2.5 py-1 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 font-mono flex items-center space-x-1.5">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>Lowest Exposure Highlight Active</span>
+                </span>
+              </div>
+            </div>
+
+            <CleanestRouteMap />
+          </div>
+        )}
 
         {/* Tab 1: OVERVIEW */}
         {activeTab === "overview" && (
