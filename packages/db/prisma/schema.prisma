@@ -1,4 +1,4 @@
-// Prisma Schema for PostGIS & TimescaleDB Air Quality Intelligence Platform
+// Prisma Schema for AeroTrace AI - PostGIS & TimescaleDB Setup
 
 generator client {
   provider        = "prisma-client-js"
@@ -8,145 +8,81 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [postgis, timescaledb]
+  extensions = [postgis]
 }
 
-enum NodeStatus {
-  ACTIVE
-  INACTIVE
-  CALIBRATING
-  OFFLINE
-}
-
-enum NodeType {
-  STATIONARY
-  MOBILE
-  CALIBRATION_REF
+enum GasType {
+  CH4
+  CO2
+  CO
 }
 
 model SensorNode {
-  id              String         @id @default(uuid()) @db.Uuid
-  nodeCode        String         @unique @map("node_code") @db.VarChar(64)
-  name            String         @db.VarChar(128)
-  description     String?        @db.Text
-  status          NodeStatus     @default(ACTIVE)
-  nodeType        NodeType       @default(STATIONARY) @map("node_type")
-
-  // Spatial coordinates (WGS 84)
-  latitude        Decimal        @db.Decimal(10, 8)
-  longitude       Decimal        @db.Decimal(11, 8)
-  altitudeMeters  Float?         @map("altitude_meters")
-  location        Unsupported("geometry(Point, 4326)")?
-
-  // Hardware metadata
-  hardwareVersion String?        @map("hardware_version") @db.VarChar(64)
-  firmwareVersion String?        @map("firmware_version") @db.VarChar(64)
-  batteryLevel    Float?         @map("battery_level")
-  metadata        Json?          @db.JsonB
-
-  installedAt     DateTime?      @map("installed_at") @db.Timestamptz(6)
-  lastSeenAt      DateTime?      @map("last_seen_at") @db.Timestamptz(6)
-  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  nodeId         String         @id @map("node_id") @db.VarChar(64)
+  busRouteId     String?        @map("bus_route_id") @db.VarChar(64)
+  status         String         @default("ACTIVE") @db.VarChar(32)
+  lastCalibrated DateTime?      @map("last_calibrated") @db.Timestamptz(6)
+  offsetPm25     Float?         @default(0.0) @map("offset_pm25")
+  offsetCo2      Float?         @default(0.0) @map("offset_co2")
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
 
   // Relations
-  telemetry       IotTelemetry[]
+  telemetry      IotTelemetry[]
 
-  @@index([status])
-  @@index([nodeType])
   @@map("sensor_nodes")
 }
 
 model IotTelemetry {
-  id              String      @default(uuid()) @db.Uuid
-  timestamp       DateTime    @db.Timestamptz(6)
-  nodeId          String      @map("node_id") @db.Uuid
-  node            SensorNode  @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  id          String                                @default(uuid()) @db.Uuid
+  time        DateTime                              @db.Timestamptz(6)
+  nodeId      String                                @map("node_id") @db.VarChar(64)
+  node        SensorNode                            @relation(fields: [nodeId], references: [nodeId], onDelete: Cascade)
 
-  // Environmental telemetry measurements
-  pm25            Float?      @map("pm2_5")
-  pm10            Float?      @map("pm10")
-  co2             Float?      @map("co2")
-  no2             Float?      @map("no2")
-  so2             Float?      @map("so2")
-  co              Float?      @map("co")
-  o3              Float?      @map("o3")
+  latitude    Decimal?                              @db.Decimal(10, 8)
+  longitude   Decimal?                              @db.Decimal(11, 8)
+  location    Unsupported("geometry(Point, 4326)")?
 
-  // Meteorological & diagnostic data
-  temperature     Float?      @map("temperature")
-  humidity        Float?      @map("humidity")
-  pressure        Float?      @map("pressure")
-  windSpeed       Float?      @map("wind_speed")
-  windDirection   Float?      @map("wind_direction")
-  batteryVoltage  Float?      @map("battery_voltage")
-  rssi            Int?        @map("rssi")
+  pm2_5       Float?                                @map("pm2_5")
+  pm10        Float?                                @map("pm10")
+  co2         Float?                                @map("co2")
+  no2         Float?                                @map("no2")
+  voc         Float?                                @map("voc")
+  temperature Float?                                @map("temperature")
+  humidity    Float?                                @map("humidity")
+  pressure    Float?                                @map("pressure")
 
-  // Spatial coordinates for mobile / localized telemetry
-  latitude        Decimal?    @db.Decimal(10, 8)
-  longitude       Decimal?    @db.Decimal(11, 8)
-  location        Unsupported("geometry(Point, 4326)")?
-
-  // Air Quality Index derived
-  aqiCalculated   Int?        @map("aqi_calculated")
-  rawPayload      Json?       @map("raw_payload") @db.JsonB
-
-  // TimescaleDB hypertable composite primary key requirement
-  @@id([timestamp, id])
-  @@index([nodeId, timestamp(sort: Desc)])
+  // TimescaleDB partition composite primary key
+  @@id([time, id])
+  @@index([nodeId, time(sort: Desc)])
   @@map("iot_telemetry")
 }
 
 model SatelliteMacroData {
-  id                  String      @id @default(uuid()) @db.Uuid
-  satelliteSource     String      @map("satellite_source") @db.VarChar(64) // e.g., SENTINEL-5P, MODIS
-  granuleId           String?     @map("granule_id") @db.VarChar(128)
-  timestamp           DateTime    @db.Timestamptz(6)
+  id             String                                  @id @default(uuid()) @db.Uuid
+  capturedAt     DateTime                                @map("captured_at") @db.Timestamptz(6)
+  gasType        GasType                                 @map("gas_type")
+  boundingBox    Unsupported("geometry(Polygon, 4326)")? @map("bounding_box")
+  rasterTilePath String?                                 @map("raster_tile_path") @db.Text
+  createdAt      DateTime                                @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  // PostGIS spatial bounding polygon (SRID 4326)
-  coverageArea        Unsupported("geometry(Polygon, 4326)")? @map("coverage_area")
-
-  // Macro atmospheric observations
-  aod                 Float?      @map("aod") // Aerosol Optical Depth
-  no2ColumnDensity    Float?      @map("no2_column_density")
-  so2ColumnDensity    Float?      @map("so2_column_density")
-  coColumnDensity     Float?      @map("co_column_density")
-  pm25Estimate        Float?      @map("pm25_estimate")
-  cloudFraction       Float?      @map("cloud_fraction")
-  spatialResolutionKm Float?      @map("spatial_resolution_km")
-
-  rawDataUrl          String?     @map("raw_data_url") @db.Text
-  metadata            Json?       @db.JsonB
-  createdAt           DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([satelliteSource, timestamp(sort: Desc)])
+  @@index([gasType, capturedAt(sort: Desc)])
   @@map("satellite_macro_data")
 }
 
 model StreetAqiGrid {
-  id                 String      @id @default(uuid()) @db.Uuid
-  gridCode           String      @unique @map("grid_code") @db.VarChar(64) // e.g. H3 Hex index or custom grid cell ID
-  streetName         String?     @map("street_name") @db.VarChar(255)
-  neighborhood       String?     @db.VarChar(128)
-  city               String      @default("Default City") @db.VarChar(100)
+  gridId            String                                    @id @default(uuid()) @map("grid_id") @db.Uuid
+  calculatedAt      DateTime                                  @default(now()) @map("calculated_at") @db.Timestamptz(6)
+  streetSegmentId   String?                                   @map("street_segment_id") @db.VarChar(128)
+  geometry          Unsupported("geometry(LineString, 4326)")
+  interpolatedAqi   Float                                     @map("interpolated_aqi")
+  confidenceScore   Float?                                    @map("confidence_score")
 
-  // PostGIS spatial representations (SRID 4326)
-  geometry           Unsupported("geometry(Polygon, 4326)") @map("geometry")
-  centroid           Unsupported("geometry(Point, 4326)")? @map("centroid")
+  // Supplementary compatibility fields
+  gridCode          String?                                   @unique @map("grid_code") @db.VarChar(64)
+  streetName        String?                                   @map("street_name") @db.VarChar(255)
+  currentAqi        Int?                                      @map("current_aqi")
+  pm25              Float?                                    @map("pm2_5")
+  dominantPollutant String?                                   @map("dominant_pollutant") @db.VarChar(16)
 
-  // Interpolated / fused AQI results
-  currentAqi         Int         @map("current_aqi")
-  aqiCategory        String?     @map("aqi_category") @db.VarChar(32) // Good, Moderate, Unhealthy, Hazardous
-  dominantPollutant  String?     @map("dominant_pollutant") @db.VarChar(16) // PM2.5, NO2, O3
-  pm25               Float?      @map("pm2_5")
-  pm10               Float?      @map("pm10")
-  no2                Float?      @map("no2")
-  confidenceScore    Float?      @map("confidence_score") // 0.0 to 1.0 (sensor proximity / data density)
-
-  lastCalculatedAt   DateTime    @default(now()) @map("last_calculated_at") @db.Timestamptz(6)
-  createdAt          DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  @@index([currentAqi])
-  @@index([city])
   @@map("street_aqi_grid")
 }

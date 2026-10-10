@@ -85,7 +85,13 @@ export async function POST(req: NextRequest) {
         },
       });
       if (results.length > 0) {
-        dbGridCells = results;
+        dbGridCells = results.map((r, idx) => ({
+          gridCode: r.gridCode || `GRID-${idx}`,
+          streetName: r.streetName,
+          currentAqi: r.currentAqi ?? 100,
+          pm25: r.pm25,
+          dominantPollutant: r.dominantPollutant,
+        }));
       }
     } catch {
       // Database offline/local fallback

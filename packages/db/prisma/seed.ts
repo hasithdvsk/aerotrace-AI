@@ -1,192 +1,127 @@
-import { PrismaClient, NodeStatus, NodeType } from '@prisma/client';
+import { PrismaClient, GasType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // 1. Seed Sensor Node
+  // 1. Seed Sensor Nodes
   const node1 = await prisma.sensorNode.upsert({
-    where: { nodeCode: 'SN-DEL-001' },
+    where: { nodeId: 'SN-DEL-001' },
     update: {},
     create: {
-      nodeCode: 'SN-DEL-001',
-      name: 'Connaught Place Central Station',
-      description: 'Solar-powered multi-gas & PM sensor array at high-density commercial intersection',
-      status: NodeStatus.ACTIVE,
-      nodeType: NodeType.STATIONARY,
-      latitude: 28.6315,
-      longitude: 77.2167,
-      altitudeMeters: 216.0,
-      hardwareVersion: 'v2.4-solar',
-      firmwareVersion: '1.8.2',
-      batteryLevel: 94.5,
-      installedAt: new Date('2026-01-15T00:00:00Z'),
-      lastSeenAt: new Date(),
-      metadata: {
-        connectivity: '4G-LTE',
-        sensors: ['PMS5003', 'BME680', 'SPEC-NO2', 'SPEC-SO2'],
-        owner: 'Municipal Environmental Protection Dept'
-      }
-    }
+      nodeId: 'SN-DEL-001',
+      busRouteId: 'ROUTE-42-RING-ROAD',
+      status: 'ACTIVE',
+      lastCalibrated: new Date('2026-03-01T00:00:00Z'),
+      offsetPm25: -2.4,
+      offsetCo2: 12.0,
+      createdAt: new Date('2026-01-15T00:00:00Z'),
+    },
   });
 
   const node2 = await prisma.sensorNode.upsert({
-    where: { nodeCode: 'SN-DEL-002' },
+    where: { nodeId: 'SN-DEL-002' },
     update: {},
     create: {
-      nodeCode: 'SN-DEL-002',
-      name: 'Anand Vihar Transit Hub',
-      description: 'Heavy vehicular traffic and interstate bus terminus perimeter node',
-      status: NodeStatus.ACTIVE,
-      nodeType: NodeType.STATIONARY,
-      latitude: 28.6469,
-      longitude: 77.3160,
-      altitudeMeters: 208.5,
-      hardwareVersion: 'v2.4-grid',
-      firmwareVersion: '1.8.2',
-      batteryLevel: 100.0,
-      installedAt: new Date('2026-01-20T00:00:00Z'),
-      lastSeenAt: new Date(),
-      metadata: {
-        connectivity: 'Ethernet + 4G Fallback',
-        sensors: ['PMS7003', 'Alphasense-OPC-N3', 'CityTech-4Gas'],
-        owner: 'Pollution Control Committee'
-      }
-    }
+      nodeId: 'SN-DEL-002',
+      busRouteId: 'ROUTE-18-TRANSIT-HUB',
+      status: 'ACTIVE',
+      lastCalibrated: new Date('2026-03-10T00:00:00Z'),
+      offsetPm25: 1.8,
+      offsetCo2: -5.5,
+      createdAt: new Date('2026-01-20T00:00:00Z'),
+    },
   });
 
-  console.log(`✅ Sensor nodes seeded: ${node1.nodeCode}, ${node2.nodeCode}`);
+  console.log(`✅ Sensor nodes seeded: ${node1.nodeId}, ${node2.nodeId}`);
 
-  // 2. Seed IoT Telemetry (Timeseries)
+  // 2. Seed IoT Telemetry Points
   const now = new Date();
   await prisma.iotTelemetry.createMany({
     data: [
       {
-        nodeId: node1.id,
-        timestamp: new Date(now.getTime() - 60000 * 30),
-        pm25: 68.4,
-        pm10: 142.1,
+        time: now,
+        nodeId: node1.nodeId,
+        latitude: 28.6315,
+        longitude: 77.2167,
+        pm2_5: 142.5,
+        pm10: 218.0,
+        co2: 580.0,
         no2: 45.2,
-        so2: 12.8,
-        co: 1.1,
-        o3: 28.3,
-        temperature: 27.4,
-        humidity: 58.0,
-        pressure: 1012.3,
-        windSpeed: 2.1,
-        windDirection: 145.0,
-        batteryVoltage: 4.12,
-        rssi: -65,
-        aqiCalculated: 158
-      },
-      {
-        nodeId: node1.id,
-        timestamp: new Date(now.getTime() - 60000 * 15),
-        pm25: 72.1,
-        pm10: 155.0,
-        no2: 48.0,
-        so2: 14.1,
-        co: 1.2,
-        o3: 26.5,
-        temperature: 28.1,
-        humidity: 56.5,
-        pressure: 1011.8,
-        windSpeed: 1.8,
-        windDirection: 150.0,
-        batteryVoltage: 4.10,
-        rssi: -66,
-        aqiCalculated: 162
-      },
-      {
-        nodeId: node2.id,
-        timestamp: now,
-        pm25: 112.5,
-        pm10: 235.8,
-        no2: 78.4,
-        so2: 24.2,
-        co: 2.4,
-        o3: 31.0,
-        temperature: 29.0,
+        voc: 1.2,
+        temperature: 31.4,
         humidity: 52.0,
-        pressure: 1011.0,
-        windSpeed: 1.2,
-        windDirection: 110.0,
-        batteryVoltage: 4.19,
-        rssi: -58,
-        aqiCalculated: 215
-      }
-    ]
+        pressure: 1012.3,
+      },
+      {
+        time: new Date(now.getTime() - 60000),
+        nodeId: node2.nodeId,
+        latitude: 28.6469,
+        longitude: 77.3160,
+        pm2_5: 284.1,
+        pm10: 382.4,
+        co2: 740.0,
+        no2: 68.4,
+        voc: 2.8,
+        temperature: 33.1,
+        humidity: 47.0,
+        pressure: 1011.8,
+      },
+    ],
+    skipDuplicates: true,
   });
-  console.log('✅ IoT Telemetry samples seeded.');
+
+  console.log('✅ IoT Telemetry sample points seeded.');
 
   // 3. Seed Satellite Macro Data
   await prisma.satelliteMacroData.create({
     data: {
-      satelliteSource: 'SENTINEL-5P-TROPOMI',
-      granuleId: 'S5P_RPRO_L2__AER_AI_20261010T080000',
-      timestamp: new Date(now.getTime() - 3600000 * 3),
-      aod: 0.58,
-      no2ColumnDensity: 0.000142,
-      so2ColumnDensity: 0.000035,
-      coColumnDensity: 0.038,
-      pm25Estimate: 78.2,
-      cloudFraction: 0.12,
-      spatialResolutionKm: 3.5,
-      rawDataUrl: 'https://sentinel-hub.example/data/tropomi/delhi-ncr-20261010.nc',
-      metadata: {
-        orbit: 35812,
-        qa_value: 0.88,
-        sensor: 'TROPOMI'
-      }
-    }
+      capturedAt: now,
+      gasType: GasType.CH4,
+      rasterTilePath: '/rasters/sentinel5p/20261010_orbit42891_ch4.tif',
+      createdAt: now,
+    },
   });
-  console.log('✅ Satellite Macro Data seeded.');
+
+  await prisma.satelliteMacroData.create({
+    data: {
+      capturedAt: now,
+      gasType: GasType.CO2,
+      rasterTilePath: '/rasters/sentinel5p/20261010_orbit42891_co2.tif',
+      createdAt: now,
+    },
+  });
+
+  console.log('✅ Satellite Macro observations seeded.');
 
   // 4. Seed Street AQI Grid
-  await prisma.streetAqiGrid.upsert({
-    where: { gridCode: 'H3-882681a339fffff' },
-    update: {},
-    create: {
-      gridCode: 'H3-882681a339fffff',
-      streetName: 'Barakhamba Road',
-      neighborhood: 'Connaught Place',
-      city: 'New Delhi',
-      currentAqi: 158,
-      aqiCategory: 'Unhealthy for Sensitive Groups',
-      dominantPollutant: 'PM2.5',
-      pm25: 68.4,
-      pm10: 142.1,
-      no2: 45.2,
-      confidenceScore: 0.94,
-      lastCalculatedAt: now
-    }
-  });
+  await prisma.$executeRawUnsafe(`
+    INSERT INTO "street_aqi_grid" (
+      "grid_id", "calculated_at", "street_segment_id", "geometry",
+      "interpolated_aqi", "confidence_score", "grid_code", "street_name",
+      "current_aqi", "pm2_5", "dominant_pollutant"
+    ) VALUES 
+    (
+      gen_random_uuid(), NOW(), 'SEG-DEL-CP-01',
+      ST_GeomFromText('LINESTRING(77.2167 28.6315, 77.2210 28.6340)', 4326),
+      158.0, 0.94, 'H3-882681a339fffff', 'Barakhamba Road', 158, 68.4, 'PM2.5'
+    ),
+    (
+      gen_random_uuid(), NOW(), 'SEG-DEL-AV-02',
+      ST_GeomFromText('LINESTRING(77.3160 28.6469, 77.3200 28.6500)', 4326),
+      215.0, 0.91, 'H3-882681a33bfffff', 'Vikas Marg Corridor', 215, 112.5, 'PM2.5'
+    )
+    ON CONFLICT ("grid_code") DO NOTHING;
+  `);
 
-  await prisma.streetAqiGrid.upsert({
-    where: { gridCode: 'H3-882681a33bfffff' },
-    update: {},
-    create: {
-      gridCode: 'H3-882681a33bfffff',
-      streetName: 'Vikas Marg / Anand Vihar Corridor',
-      neighborhood: 'Anand Vihar',
-      city: 'New Delhi',
-      currentAqi: 215,
-      aqiCategory: 'Very Unhealthy',
-      dominantPollutant: 'PM2.5',
-      pm25: 112.5,
-      pm10: 235.8,
-      no2: 78.4,
-      confidenceScore: 0.91,
-      lastCalculatedAt: now
-    }
-  });
-  console.log('✅ Street AQI Grid seeded.');
+  console.log('✅ Street AQI Grid line geometries seeded.');
+  console.log('🎉 Database seeding complete!');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('❌ Seeding error:', e);
     process.exit(1);
   })
   .finally(async () => {

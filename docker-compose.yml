@@ -1,0 +1,23 @@
+services:
+  aerotrace_postgres:
+    image: timescale/timescaledb-ha:pg16
+    container_name: aerotrace_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aerotrace_user
+      POSTGRES_PASSWORD: aerotrace_password
+      POSTGRES_DB: aerotrace_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - aerotrace_pgdata:/home/postgres/pgdata/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aerotrace_user -d aerotrace_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  aerotrace_pgdata:
+    driver: local
