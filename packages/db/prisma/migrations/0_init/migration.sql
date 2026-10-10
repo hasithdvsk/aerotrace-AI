@@ -77,6 +77,7 @@ CREATE TABLE "iot_telemetry" (
     "node_id" UUID NOT NULL,
     "pm2_5" DOUBLE PRECISION,
     "pm10" DOUBLE PRECISION,
+    "co2" DOUBLE PRECISION,
     "no2" DOUBLE PRECISION,
     "so2" DOUBLE PRECISION,
     "co" DOUBLE PRECISION,
@@ -88,6 +89,9 @@ CREATE TABLE "iot_telemetry" (
     "wind_direction" DOUBLE PRECISION,
     "battery_voltage" DOUBLE PRECISION,
     "rssi" INTEGER,
+    "latitude" DECIMAL(10,8),
+    "longitude" DECIMAL(11,8),
+    "location" geometry(Point, 4326),
     "aqi_calculated" INTEGER,
     "raw_payload" JSONB,
 
@@ -97,6 +101,23 @@ CREATE TABLE "iot_telemetry" (
 
 -- Fast lookup for node-specific time ranges
 CREATE INDEX "iot_telemetry_node_id_timestamp_idx" ON "iot_telemetry"("node_id", "timestamp" DESC);
+CREATE INDEX "iot_telemetry_location_gist_idx" ON "iot_telemetry" USING GIST ("location");
+
+-- PostGIS Trigger to automatically populate telemetry location Point from latitude/longitude
+CREATE OR REPLACE FUNCTION sync_iot_telemetry_location()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.latitude IS NOT NULL AND NEW.longitude IS NOT NULL THEN
+        NEW.location := ST_SetSRID(ST_MakePoint(NEW.longitude, NEW.latitude), 4326);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_sync_iot_telemetry_location
+BEFORE INSERT OR UPDATE OF latitude, longitude ON "iot_telemetry"
+FOR EACH ROW
+EXECUTE FUNCTION sync_iot_telemetry_location();
 
 -- Convert iot_telemetry to TimescaleDB Hypertable
 DO $$

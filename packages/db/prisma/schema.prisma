@@ -66,6 +66,7 @@ model IotTelemetry {
   // Environmental telemetry measurements
   pm25            Float?      @map("pm2_5")
   pm10            Float?      @map("pm10")
+  co2             Float?      @map("co2")
   no2             Float?      @map("no2")
   so2             Float?      @map("so2")
   co              Float?      @map("co")
@@ -79,6 +80,11 @@ model IotTelemetry {
   windDirection   Float?      @map("wind_direction")
   batteryVoltage  Float?      @map("battery_voltage")
   rssi            Int?        @map("rssi")
+
+  // Spatial coordinates for mobile / localized telemetry
+  latitude        Decimal?    @db.Decimal(10, 8)
+  longitude       Decimal?    @db.Decimal(11, 8)
+  location        Unsupported("geometry(Point, 4326)")?
 
   // Air Quality Index derived
   aqiCalculated   Int?        @map("aqi_calculated")
