@@ -5,6 +5,7 @@ A multi-scale satellite & mobile IoT climate intelligence platform that helps pe
 ## Architecture
 
 - **`apps/web`**: **Next.js 16** App Router frontend with **TypeScript** and **Tailwind CSS**, featuring real-time sensor node tracking, TimescaleDB telemetry feeds, Sentinel-5P satellite observations, and PostGIS street grid AQI visualizations.
+- **`apps/ai-engine`**: **Python FastAPI** AI & geostatistical microservice with **Ordinary Kriging** street line interpolation, **PyTorch multi-variate LSTM** 14-day forecasting, and mobile bus spatio-temporal auto-calibration.
 - **`packages/db`**: **Prisma ORM** configured with the `postgresqlExtensions` preview feature for **PostGIS** and **TimescaleDB**.
 
 ## Database Models
