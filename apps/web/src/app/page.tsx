@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import {
   Activity,
   Radio,
@@ -22,6 +23,7 @@ import {
   Flame,
   CheckCircle2,
   Navigation2,
+  Building2,
 } from "lucide-react";
 
 const CleanestRouteMap = dynamic(
@@ -344,7 +346,14 @@ export default function Home() {
                 Integrated monorepo architecture uniting ground-level IoT sensor hypertable telemetry, Sentinel-5P satellite tropospheric data, and PostGIS street grid polygon interpolation.
               </p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Link
+                href="/dashboard"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-semibold text-xs flex items-center space-x-2 transition shadow-lg shadow-red-950/40"
+              >
+                <Building2 className="h-4 w-4" />
+                <span>Government Portal</span>
+              </Link>
               <button
                 onClick={() => setActiveTab("routes")}
                 className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center space-x-2 transition shadow-lg shadow-emerald-600/30"
