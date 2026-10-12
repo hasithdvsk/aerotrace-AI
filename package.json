@@ -15,6 +15,12 @@
     "test:ai": "pytest apps/ai-engine/tests/test_api.py",
     "firmware:build": "python -m platformio run -d iot-firmware",
     "firmware:clean": "python -m platformio run -d iot-firmware -t clean",
-    "test:e2e": "ts-node scripts/e2e-system-test.ts"
+    "test:e2e": "ts-node scripts/e2e-system-test.ts",
+    "simulate:fleet": "ts-node scripts/simulate-bus-fleet.ts"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.13",
+    "node-fetch": "^3.3.2",
+    "ts-node": "^10.9.2"
   }
 }

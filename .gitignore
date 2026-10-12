@@ -40,6 +40,7 @@ adapters/
 extensions/
 scripts/*
 !scripts/e2e-system-test.ts
+!scripts/simulate-bus-fleet.ts
 argv.json
 model_capabilities.yaml
 PROJECT_RULES.md
