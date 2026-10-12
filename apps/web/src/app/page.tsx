@@ -39,6 +39,32 @@ const CleanestRouteMap = dynamic(
   }
 );
 
+const GsapHeroReveal = dynamic(
+  () => import("@/components/animations/GsapHeroReveal"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[580px] rounded-3xl bg-slate-900/40 border border-slate-800 animate-pulse flex items-center justify-center text-slate-500 font-mono text-xs">
+        Initializing GSAP Motion Storyboard & Spatial Kriging Timeline...
+      </div>
+    ),
+  }
+);
+
+const SatelliteGlobe3D = dynamic(
+  () => import("@/components/animations/SatelliteGlobe3D"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[400px] rounded-3xl bg-slate-900/40 border border-slate-800 animate-pulse flex flex-col items-center justify-center text-slate-500 font-mono text-xs">
+        <Satellite className="h-8 w-8 text-cyan-400 animate-spin mb-3" />
+        <span>Initializing WebGL 3D Orbital Globe & Sentinel-5P Geometry...</span>
+      </div>
+    ),
+  }
+);
+
+
 // Mock data representing the 4 database models
 const INITIAL_SENSOR_NODES = [
   {
@@ -331,51 +357,63 @@ export default function Home() {
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Hero Banner */}
-        <section className="relative rounded-2xl overflow-hidden border border-slate-800 bg-gradient-to-br from-slate-900/90 via-slate-900/50 to-cyan-950/20 p-6 md:p-8">
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-cyan-400 bg-cyan-950/60 px-3 py-1 rounded-full border border-cyan-800/50">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                <span>Production Database Schema & Micro-Frontend Scaffolding</span>
+        {/* GSAP Motion Storyboard Hero Section */}
+        <GsapHeroReveal />
+
+        {/* 3D Satellite Globe & Orbital Macro Fusion Showcase */}
+        <section className="relative rounded-3xl overflow-hidden border border-slate-800 bg-gradient-to-br from-slate-900/95 via-slate-900/70 to-cyan-950/20 p-6 sm:p-8 backdrop-blur shadow-2xl">
+          <div className="absolute top-0 right-0 -mt-16 -mr-16 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
+            <div className="w-full lg:w-7/12 space-y-4">
+              <div className="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-cyan-400 bg-cyan-950/80 px-3 py-1 rounded-full border border-cyan-800/60 font-mono">
+                <Satellite className="h-3.5 w-3.5 animate-pulse" />
+                <span>ESA Sentinel-5P &times; 3D Atmospheric Digital Twin</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Hyperlocal Urban Air Quality & Spatial Fusion Engine
-              </h1>
-              <p className="text-sm text-slate-300 max-w-2xl">
-                Integrated monorepo architecture uniting ground-level IoT sensor hypertable telemetry, Sentinel-5P satellite tropospheric data, and PostGIS street grid polygon interpolation.
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Macro-Spatial Satellite Observation Canvas
+              </h2>
+              <p className="text-sm text-slate-300 leading-relaxed max-w-2xl">
+                Interactive real-time 3D Earth digital twin tracking the ESA Copernicus Sentinel-5P polar orbit.
+                The nadir TROPOMI sensor emits atmospheric scanning lasers continuously sampling Tropospheric NO₂
+                and Aerosol Optical Depth (AOD), fused in PostGIS with ground-level transit bus LoRaWAN telemetry.
               </p>
+
+              {/* Satellite Metrics Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                  <div className="text-[10px] font-mono text-slate-400 uppercase">Orbit Altitude</div>
+                  <div className="text-base font-bold text-cyan-300 font-mono">824 km</div>
+                  <div className="text-[10px] text-slate-500">Sun-synchronous</div>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                  <div className="text-[10px] font-mono text-slate-400 uppercase">Inclination</div>
+                  <div className="text-base font-bold text-emerald-300 font-mono">98.7° (Polar)</div>
+                  <div className="text-[10px] text-slate-500">Daily global coverage</div>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 col-span-2 sm:col-span-1">
+                  <div className="text-[10px] font-mono text-slate-400 uppercase">Swath Width</div>
+                  <div className="text-base font-bold text-purple-300 font-mono">2,600 km</div>
+                  <div className="text-[10px] text-slate-500">Continuous nadir scan</div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  onClick={() => setActiveTab("satellite")}
+                  className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs flex items-center space-x-2 transition shadow-lg shadow-cyan-950/50"
+                >
+                  <Satellite className="h-3.5 w-3.5" />
+                  <span>Inspect Satellite Granules</span>
+                </button>
+                <div className="flex items-center space-x-2 text-xs font-mono text-slate-400">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span>Drag globe to rotate • 60 FPS WebGL</span>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <Link
-                href="/citizen"
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs flex items-center space-x-2 transition shadow-lg shadow-emerald-950/40"
-              >
-                <Leaf className="h-4 w-4" />
-                <span>Citizen Portal & Dosage</span>
-              </Link>
-              <Link
-                href="/dashboard"
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-semibold text-xs flex items-center space-x-2 transition shadow-lg shadow-red-950/40"
-              >
-                <Building2 className="h-4 w-4" />
-                <span>Government Portal</span>
-              </Link>
-              <button
-                onClick={() => setActiveTab("routes")}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs flex items-center space-x-2 transition border border-slate-700"
-              >
-                <Navigation2 className="h-4 w-4 text-emerald-400" />
-                <span>Cleanest Route</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("schema")}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs flex items-center space-x-2 transition border border-slate-700"
-              >
-                <Code2 className="h-4 w-4" />
-                <span>View Schema & SQL</span>
-              </button>
+
+            <div className="w-full lg:w-5/12 h-[380px] sm:h-[420px] rounded-2xl bg-slate-950/80 border border-slate-800/80 overflow-hidden relative shadow-inner">
+              <SatelliteGlobe3D className="w-full h-full" />
             </div>
           </div>
         </section>
