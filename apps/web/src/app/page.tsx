@@ -24,6 +24,7 @@ import {
   CheckCircle2,
   Navigation2,
   Building2,
+  Leaf,
 } from "lucide-react";
 
 const CleanestRouteMap = dynamic(
@@ -348,6 +349,13 @@ export default function Home() {
             </div>
             <div className="flex flex-wrap items-center gap-2.5">
               <Link
+                href="/citizen"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs flex items-center space-x-2 transition shadow-lg shadow-emerald-950/40"
+              >
+                <Leaf className="h-4 w-4" />
+                <span>Citizen Portal & Dosage</span>
+              </Link>
+              <Link
                 href="/dashboard"
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-semibold text-xs flex items-center space-x-2 transition shadow-lg shadow-red-950/40"
               >
@@ -356,10 +364,10 @@ export default function Home() {
               </Link>
               <button
                 onClick={() => setActiveTab("routes")}
-                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center space-x-2 transition shadow-lg shadow-emerald-600/30"
+                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs flex items-center space-x-2 transition border border-slate-700"
               >
-                <Navigation2 className="h-4 w-4" />
-                <span>Cleanest Route Navigation</span>
+                <Navigation2 className="h-4 w-4 text-emerald-400" />
+                <span>Cleanest Route</span>
               </button>
               <button
                 onClick={() => setActiveTab("schema")}

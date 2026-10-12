@@ -56,7 +56,24 @@ interface RouteAlternative {
   }>;
 }
 
-export default function CleanestRouteMap() {
+export interface RouteSelectionData {
+  routeId: string;
+  routeName: string;
+  isCleanest: boolean;
+  pm25Average: number;
+  durationMinutes: number;
+  distanceKm: number;
+  cumulativeExposureScore: number;
+  exposureSavingsPercent: number;
+  peakAqi: number;
+}
+
+export interface CleanestRouteMapProps {
+  onRouteSelect?: (route: RouteSelectionData) => void;
+  className?: string;
+}
+
+export default function CleanestRouteMap({ onRouteSelect, className = "" }: CleanestRouteMapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const startMarkerRef = useRef<mapboxgl.Marker | null>(null);
@@ -289,10 +306,11 @@ export default function CleanestRouteMap() {
 
         const cleanest = mergedRoutes.find((r) => r.isCleanest) || mergedRoutes[0];
         setCleanestRoute(cleanest);
-        setSelectedRouteId(cleanest?.id || null);
-
-        // Render on Mapbox
-        renderRoutesOnMap(mergedRoutes, cleanest?.id);
+        if (cleanest) {
+          selectRoute(cleanest, mergedRoutes);
+        } else {
+          renderRoutesOnMap(mergedRoutes);
+        }
       }
     } catch (err) {
       console.error("Route evaluation error:", err);
@@ -301,11 +319,32 @@ export default function CleanestRouteMap() {
     }
   };
 
+  // Select a route and notify parent callback
+  const selectRoute = (r: RouteAlternative, routeList?: RouteAlternative[]) => {
+    setSelectedRouteId(r.id);
+    renderRoutesOnMap(routeList || routes, r.id);
+    if (onRouteSelect) {
+      onRouteSelect({
+        routeId: r.id,
+        routeName: r.name,
+        isCleanest: !!r.isCleanest,
+        pm25Average: Number(r.averageAqi ? (r.averageAqi * 0.45).toFixed(1) : 36.4),
+        durationMinutes: r.durationMinutes || Math.round(r.durationSeconds / 60),
+        distanceKm: r.distanceKm || Number((r.distanceMeters / 1000).toFixed(1)),
+        cumulativeExposureScore: r.cumulativeExposureScore || 100,
+        exposureSavingsPercent: r.exposureSavingsPercent || 0,
+        peakAqi: r.peakAqi || 120,
+      });
+    }
+  };
+
   // Render GeoJSON routes on Mapbox GL JS canvas
   const renderRoutesOnMap = useCallback(
     (routeList: RouteAlternative[], primaryId?: string) => {
       const map = mapRef.current;
       if (!map || !map.isStyleLoaded()) return;
+
+      const activeId = primaryId || selectedRouteId;
 
       // Remove previous route layers and sources
       routeList.forEach((r) => {
@@ -321,7 +360,7 @@ export default function CleanestRouteMap() {
 
       sortedRoutes.forEach((route) => {
         const isClean = route.isCleanest;
-        const isSelected = selectedRouteId === route.id || (!selectedRouteId && isClean);
+        const isSelected = activeId === route.id || (!activeId && isClean);
 
         map.addSource(`source-${route.id}`, {
           type: "geojson",
@@ -335,7 +374,7 @@ export default function CleanestRouteMap() {
         // Extend bounding box
         route.geometry.coordinates.forEach((c) => bounds.extend(c));
 
-        // If Cleanest Route -> render thick glowing green line
+        // If Cleanest Route -> render thick glowing green line in #10B981
         if (isClean) {
           // Glow layer
           map.addLayer({
@@ -344,10 +383,10 @@ export default function CleanestRouteMap() {
             source: `source-${route.id}`,
             layout: { "line-join": "round", "line-cap": "round" },
             paint: {
-              "line-color": "#10b981", // Emerald
-              "line-width": 12,
-              "line-opacity": 0.35,
-              "line-blur": 4,
+              "line-color": "#10B981", // Emerald Green
+              "line-width": 14,
+              "line-opacity": isSelected ? 0.45 : 0.2,
+              "line-blur": 5,
             },
           });
 
@@ -358,23 +397,23 @@ export default function CleanestRouteMap() {
             source: `source-${route.id}`,
             layout: { "line-join": "round", "line-cap": "round" },
             paint: {
-              "line-color": "#10b981", // Solid Emerald Green
-              "line-width": 6,
+              "line-color": "#10B981", // Solid Emerald Green
+              "line-width": isSelected ? 7 : 5,
               "line-opacity": 1.0,
             },
           });
         } else {
-          // Alternative routes -> render in amber/gray with lower opacity or dash
+          // Alternative routes -> render in muted gray #6B7280 with dash
           map.addLayer({
             id: `line-${route.id}`,
             type: "line",
             source: `source-${route.id}`,
             layout: { "line-join": "round", "line-cap": "round" },
             paint: {
-              "line-color": route.color || "#64748b",
-              "line-width": isSelected ? 5 : 3.5,
-              "line-opacity": isSelected ? 0.9 : 0.5,
-              "line-dasharray": [2, 1],
+              "line-color": "#6B7280", // Muted Gray
+              "line-width": isSelected ? 6 : 3.5,
+              "line-opacity": isSelected ? 0.95 : 0.5,
+              "line-dasharray": isSelected ? [1] : [2, 1],
             },
           });
         }
@@ -561,10 +600,7 @@ export default function CleanestRouteMap() {
                 return (
                   <div
                     key={r.id}
-                    onClick={() => {
-                      setSelectedRouteId(r.id);
-                      renderRoutesOnMap(routes, r.id);
-                    }}
+                    onClick={() => selectRoute(r)}
                     className={`cursor-pointer p-3.5 rounded-xl border transition ${
                       isCleanest
                         ? "bg-emerald-950/20 border-emerald-500/50 hover:bg-emerald-950/30 ring-1 ring-emerald-500/20"
@@ -645,16 +681,45 @@ export default function CleanestRouteMap() {
       <div className="relative flex-1 h-full w-full bg-slate-950">
         <div ref={mapContainerRef} className="absolute inset-0 h-full w-full" />
 
-        {/* Floating Cleanest Route Banner Overlay */}
+        {/* Floating Commuter Route Switcher & Exposure Overlay */}
         {cleanestRoute && (
-          <div className="absolute top-4 left-4 right-4 sm:right-auto sm:max-w-md z-10 p-3.5 rounded-xl bg-slate-900/90 backdrop-blur-md border border-emerald-500/40 shadow-xl space-y-2">
+          <div className="absolute top-4 left-4 right-4 sm:right-auto sm:max-w-md z-10 p-3.5 rounded-xl bg-slate-900/95 backdrop-blur-md border border-slate-700/80 shadow-2xl space-y-2.5">
+            {/* Commuter Quick Route Switcher Toggle */}
+            <div className="flex p-1 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+              <button
+                onClick={() => selectRoute(cleanestRoute)}
+                className={`flex-1 py-1.5 px-2.5 rounded-lg font-bold transition flex items-center justify-center space-x-1.5 ${
+                  selectedRouteId === cleanestRoute.id || !selectedRouteId
+                    ? "bg-emerald-600 text-white shadow-md shadow-emerald-950"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+                <span>Cleanest Route (#10B981)</span>
+              </button>
+              <button
+                onClick={() => {
+                  const alt = routes.find((r) => !r.isCleanest);
+                  if (alt) selectRoute(alt);
+                }}
+                className={`flex-1 py-1.5 px-2.5 rounded-lg font-bold transition flex items-center justify-center space-x-1.5 ${
+                  selectedRouteId && selectedRouteId !== cleanestRoute.id
+                    ? "bg-slate-700 text-white shadow-md"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <span className="h-2 w-2 rounded-full bg-gray-400"></span>
+                <span>Standard Route (#6B7280)</span>
+              </button>
+            </div>
+
             <div className="flex items-center justify-between">
               <span className="flex items-center space-x-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wide">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>Highlighted in Green: Lowest Exposure</span>
+                <span>Eco-Shield Navigation</span>
               </span>
               <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">
-                -{cleanestRoute.exposureSavingsPercent || 28}% Harmful Inhalation
+                -{cleanestRoute.exposureSavingsPercent || 28}% Inhalation
               </span>
             </div>
 
