@@ -1,0 +1,10 @@
+# PlatformIO build directory and local toolchain cache
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Editor specific
+.vscode/
+.idea/
+*.swp
+*.bak

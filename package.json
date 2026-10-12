@@ -12,6 +12,8 @@
     "db:generate": "npm run generate --workspace=@repo/db",
     "db:migrate": "npm run migrate:dev --workspace=@repo/db",
     "dev:ai": "uvicorn app.main:app --app-dir apps/ai-engine --host 0.0.0.0 --port 8000 --reload",
-    "test:ai": "pytest apps/ai-engine/tests/test_api.py"
+    "test:ai": "pytest apps/ai-engine/tests/test_api.py",
+    "firmware:build": "python -m platformio run -d iot-firmware",
+    "firmware:clean": "python -m platformio run -d iot-firmware -t clean"
   }
 }
