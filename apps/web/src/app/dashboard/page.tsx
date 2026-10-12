@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import LivePulseBadge from "@/components/animations/LivePulseBadge";
+import AnimatedCounter from "@/components/animations/AnimatedCounter";
 import {
   ShieldCheck,
   AlertTriangle,
@@ -973,6 +976,10 @@ export default function GovernmentDashboardPage() {
                   </div>
                 </div>
 
+                <div className="flex items-center space-x-2">
+                  <LivePulseBadge statusText="HOTSPOT RADAR" color="rose" size="sm" />
+                </div>
+
                 {/* Filter Selector */}
                 <div className="flex items-center space-x-1 bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[11px]">
                   {(["ALL", "CRITICAL", "ACTIVE"] as const).map((filter) => (
@@ -991,15 +998,34 @@ export default function GovernmentDashboardPage() {
                 </div>
               </div>
 
-              {/* Scrollable Hotspot Alert List */}
-              <div className="flex-1 overflow-y-auto space-y-3 py-3 pr-1 custom-scrollbar">
+              {/* Scrollable Hotspot Alert List with Framer Motion Staggered Entrance */}
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0 },
+                  show: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.07, delayChildren: 0.05 },
+                  },
+                }}
+                initial="hidden"
+                animate="show"
+                className="flex-1 overflow-y-auto space-y-3 py-3 pr-1 custom-scrollbar"
+              >
+                <AnimatePresence mode="popLayout">
                 {filteredHotspots.map((hotspot) => {
                   const isSelected = selectedHotspot?.id === hotspot.id;
                   const isCritical = hotspot.severity === "CRITICAL";
 
                   return (
-                    <div
+                    <motion.div
                       key={hotspot.id}
+                      layout
+                      variants={{
+                        hidden: { opacity: 0, y: 14, scale: 0.98 },
+                        show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 120, damping: 15 } },
+                      }}
+                      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                      whileHover={{ scale: 1.01 }}
                       onClick={() => setSelectedHotspot(hotspot)}
                       className={`p-3.5 rounded-xl border transition cursor-pointer relative ${
                         isSelected
@@ -1099,10 +1125,11 @@ export default function GovernmentDashboardPage() {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
-              </div>
+                </AnimatePresence>
+              </motion.div>
             </div>
           </div>
         </div>

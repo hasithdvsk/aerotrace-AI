@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck,
   AlertTriangle,
@@ -15,6 +16,8 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
+import AnimatedCounter from "./animations/AnimatedCounter";
+import LivePulseBadge from "./animations/LivePulseBadge";
 
 export interface DosageTrackerProps {
   pm25Concentration?: number; // µg/m³
@@ -97,9 +100,14 @@ export default function DosageTrackerCard({
   const risk = getRiskColor(whoPercentage);
 
   return (
-    <div className={`rounded-2xl bg-slate-900/80 border border-slate-800 p-5 space-y-5 text-slate-100 shadow-xl backdrop-blur ${className}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: "easeOut" }}
+      className={`rounded-2xl bg-slate-900/80 border border-slate-800 p-5 space-y-5 text-slate-100 shadow-xl backdrop-blur ${className}`}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-3">
         <div className="flex items-center space-x-2.5">
           <div className="p-2 rounded-xl bg-emerald-950/80 border border-emerald-700/60 text-emerald-400">
             <HeartPulse className="h-5 w-5" />
@@ -119,17 +127,27 @@ export default function DosageTrackerCard({
           </div>
         </div>
 
-        {/* Round trip toggle */}
-        <button
-          onClick={() => setRoundTrip(!roundTrip)}
-          className={`px-2.5 py-1 rounded-lg text-[10px] font-mono border transition ${
-            roundTrip
-              ? "bg-slate-800 text-cyan-300 border-cyan-700/60"
-              : "bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200"
-          }`}
-        >
-          {roundTrip ? "Daily (Round-Trip 2x)" : "Single Trip (1x)"}
-        </button>
+        <div className="flex items-center space-x-2">
+          {/* Live Pulse Indicator */}
+          <LivePulseBadge
+            statusText={isCleanRoute ? "ACTIVE SHIELD" : "STANDARD CORRIDOR"}
+            color={isCleanRoute ? "emerald" : "amber"}
+            size="sm"
+          />
+
+          {/* Round trip toggle */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setRoundTrip(!roundTrip)}
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-mono border transition ${
+              roundTrip
+                ? "bg-slate-800 text-cyan-300 border-cyan-700/60"
+                : "bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200"
+            }`}
+          >
+            {roundTrip ? "Daily (Round-Trip 2x)" : "Single Trip (1x)"}
+          </motion.button>
+        </div>
       </div>
 
       {/* Transit Mode Selector */}
@@ -137,7 +155,7 @@ export default function DosageTrackerCard({
         <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 flex justify-between items-center">
           <span>Select Commuter Inhalation Activity</span>
           <span className="text-[10px] text-slate-500 font-normal">
-            Ventilation: {activeMode.rate * 60} m³/hr
+            Ventilation: {(activeMode.rate * 60).toFixed(2)} m³/hr
           </span>
         </div>
         <div className="grid grid-cols-3 gap-2">
@@ -146,8 +164,10 @@ export default function DosageTrackerCard({
             const Icon = config.icon;
             const isSelected = commuteMode === mode;
             return (
-              <button
+              <motion.button
                 key={mode}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => setCommuteMode(mode)}
                 className={`p-2.5 rounded-xl border text-left transition flex items-center space-x-2 ${
                   isSelected
@@ -168,7 +188,7 @@ export default function DosageTrackerCard({
                     {(config.rate * 60).toFixed(2)} m³/h
                   </div>
                 </div>
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -182,8 +202,8 @@ export default function DosageTrackerCard({
               Estimated Personal Intake
             </div>
             <div className="flex items-baseline space-x-2 mt-0.5">
-              <span className="text-3xl font-extrabold text-white tracking-tight">
-                {personalDosageUg.toFixed(1)}
+              <span className="text-3xl font-extrabold text-white tracking-tight flex items-baseline">
+                <AnimatedCounter value={personalDosageUg} precision={1} />
               </span>
               <span className="text-xs text-slate-400 font-mono">µg (micrograms)</span>
             </div>
@@ -191,19 +211,25 @@ export default function DosageTrackerCard({
 
           {/* Compared to standard route savings */}
           {dosageSavedUg > 0 && (
-            <div className="text-right p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/70">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="text-right p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/70"
+            >
               <div className="text-[10px] uppercase font-mono text-emerald-400 flex items-center justify-end space-x-1">
                 <TrendingDown className="h-3 w-3" />
                 <span>Protected Inhalation</span>
               </div>
               <div className="text-sm font-bold text-emerald-300 font-mono">
-                -{dosageSavedUg.toFixed(1)} µg ({dosageReductionPct}% less)
+                -<AnimatedCounter value={dosageSavedUg} precision={1} /> µg (
+                <AnimatedCounter value={dosageReductionPct} precision={0} />% less)
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
 
-        {/* Dynamic Risk Accumulation Progress Bar */}
+        {/* Dynamic Risk Accumulation Progress Bar with Spring Animation */}
         <div className="space-y-1.5">
           <div className="flex justify-between items-center text-xs font-medium">
             <span className="text-slate-300 flex items-center space-x-1.5">
@@ -211,11 +237,12 @@ export default function DosageTrackerCard({
               <strong className="text-white font-mono">{whoBudget} µg</strong>
             </span>
             <span
-              className={`font-mono font-bold text-xs ${
+              className={`font-mono font-bold text-xs flex items-center space-x-1 ${
                 whoPercentage <= 50 ? "text-emerald-400" : whoPercentage <= 100 ? "text-amber-400" : "text-rose-400"
               }`}
             >
-              {whoPercentage}% of limit ({risk.label})
+              <AnimatedCounter value={whoPercentage} precision={0} />
+              <span>% of limit ({risk.label})</span>
             </span>
           </div>
 
@@ -223,10 +250,16 @@ export default function DosageTrackerCard({
             {/* 100% Marker Line */}
             <div className="absolute top-0 bottom-0 left-full -ml-0.5 w-0.5 bg-rose-500/60 z-10" />
 
-            {/* Filled Animated Bar */}
-            <div
-              className={`h-full rounded-full transition-all duration-700 ease-out shadow-lg ${risk.barClass}`}
-              style={{ width: `${Math.min(whoPercentage, 100)}%` }}
+            {/* Spring-animated Filled Bar */}
+            <motion.div
+              className={`h-full rounded-full shadow-lg ${risk.barClass}`}
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min(whoPercentage, 100)}%` }}
+              transition={{
+                type: "spring",
+                stiffness: 75,
+                damping: 18,
+              }}
             />
           </div>
 
@@ -237,15 +270,19 @@ export default function DosageTrackerCard({
           </div>
         </div>
 
-        {/* Exposure Parameters Breakdown */}
+        {/* Exposure Parameters Breakdown with Animated Spring Numbers */}
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800/80 text-[11px] font-mono">
           <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
             <div className="text-[10px] text-slate-500">Avg PM2.5</div>
-            <div className="font-bold text-cyan-300">{pm25Concentration.toFixed(1)} µg/m³</div>
+            <div className="font-bold text-cyan-300">
+              <AnimatedCounter value={pm25Concentration} precision={1} suffix=" µg/m³" />
+            </div>
           </div>
           <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
             <div className="text-[10px] text-slate-500">Air Inhaled</div>
-            <div className="font-bold text-slate-200">{airVolumeM3.toFixed(2)} m³</div>
+            <div className="font-bold text-slate-200">
+              <AnimatedCounter value={airVolumeM3} precision={2} suffix=" m³" />
+            </div>
           </div>
           <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
             <div className="text-[10px] text-slate-500">Commute Time</div>
@@ -266,6 +303,6 @@ export default function DosageTrackerCard({
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
