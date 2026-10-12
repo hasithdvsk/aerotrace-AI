@@ -31,12 +31,15 @@ htmlcov/
 
 # Antigravity IDE internal directories (exclude from project repository)
 .agent/
-.agents/
+.agents/*
+!.agents/workflows/
+!.agents/workflows/deploy.md
 .gemini/
 .gsd/
 adapters/
 extensions/
-scripts/
+scripts/*
+!scripts/e2e-system-test.ts
 argv.json
 model_capabilities.yaml
 PROJECT_RULES.md
