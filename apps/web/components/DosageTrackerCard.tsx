@@ -104,25 +104,25 @@ export default function DosageTrackerCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
-      className={`rounded-2xl bg-slate-900/80 border border-slate-800 p-5 space-y-5 text-slate-100 shadow-xl backdrop-blur ${className}`}
+      className={`glass-card glass-card-hover border border-white/10 p-6 space-y-6 text-slate-100 shadow-2xl backdrop-blur-2xl ${className}`}
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/10 gap-3">
         <div className="flex items-center space-x-2.5">
-          <div className="p-2 rounded-xl bg-emerald-950/80 border border-emerald-700/60 text-emerald-400">
+          <div className="p-2.5 rounded-xl bg-emerald-cyber-500/15 border border-emerald-cyber-500/40 text-emerald-cyber-400 shadow-glow-emerald">
             <HeartPulse className="h-5 w-5" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-              <span>Personal Pollution Dosage Tracker</span>
+              <span className="text-gradient-emerald">Personal Pollution Dosage Tracker</span>
               {isCleanRoute && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-cyber-500/20 text-emerald-cyber-300 border border-emerald-cyber-500/40 font-mono font-bold shadow-glow-emerald">
                   CLEAN ROUTE
                 </span>
               )}
             </h3>
             <p className="text-[11px] text-slate-400">
-              Formula: <code className="text-cyan-300 font-mono">Dosage = PM2.5 × Inhalation_Rate × Duration</code>
+              Formula: <code className="text-cyan-electric-400 font-mono">Dosage = PM2.5 × Inhalation_Rate × Duration</code>
             </p>
           </div>
         </div>
@@ -171,13 +171,13 @@ export default function DosageTrackerCard({
                 onClick={() => setCommuteMode(mode)}
                 className={`p-2.5 rounded-xl border text-left transition flex items-center space-x-2 ${
                   isSelected
-                    ? "bg-slate-800 border-cyan-500 text-white shadow-md shadow-cyan-950/40 ring-1 ring-cyan-500/50"
-                    : "bg-slate-950/70 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200"
+                    ? "bg-obsidian-800 border-emerald-cyber-400 text-white shadow-glow-emerald ring-1 ring-emerald-cyber-400/40"
+                    : "bg-obsidian-950/70 border-white/10 text-slate-400 hover:border-emerald-cyber-500/30 hover:text-slate-200"
                 }`}
               >
                 <div
                   className={`p-1.5 rounded-lg ${
-                    isSelected ? "bg-cyan-500/20 text-cyan-400" : "bg-slate-900 text-slate-500"
+                    isSelected ? "bg-emerald-cyber-500/20 text-emerald-cyber-400" : "bg-obsidian-900 text-slate-500"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -195,17 +195,17 @@ export default function DosageTrackerCard({
       </div>
 
       {/* Dosage Metrics Display Card */}
-      <div className="p-4 rounded-xl bg-slate-950/90 border border-slate-800/80 space-y-4">
+      <div className="p-5 rounded-2xl glass-card border-white/10 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div>
             <div className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
               Estimated Personal Intake
             </div>
-            <div className="flex items-baseline space-x-2 mt-0.5">
-              <span className="text-3xl font-extrabold text-white tracking-tight flex items-baseline">
+            <div className="flex items-baseline space-x-2 mt-0.5 font-mono">
+              <span className="text-3xl font-extrabold text-gradient-emerald tracking-tight flex items-baseline">
                 <AnimatedCounter value={personalDosageUg} precision={1} />
               </span>
-              <span className="text-xs text-slate-400 font-mono">µg (micrograms)</span>
+              <span className="text-xs text-slate-400">µg (micrograms)</span>
             </div>
           </div>
 
@@ -215,13 +215,13 @@ export default function DosageTrackerCard({
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.3 }}
-              className="text-right p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/70"
+              className="text-right p-2.5 rounded-xl bg-emerald-cyber-500/10 border border-emerald-cyber-500/40 shadow-glow-emerald"
             >
-              <div className="text-[10px] uppercase font-mono text-emerald-400 flex items-center justify-end space-x-1">
+              <div className="text-[10px] uppercase font-mono text-emerald-cyber-400 flex items-center justify-end space-x-1">
                 <TrendingDown className="h-3 w-3" />
                 <span>Protected Inhalation</span>
               </div>
-              <div className="text-sm font-bold text-emerald-300 font-mono">
+              <div className="text-sm font-bold text-emerald-cyber-300 font-mono">
                 -<AnimatedCounter value={dosageSavedUg} precision={1} /> µg (
                 <AnimatedCounter value={dosageReductionPct} precision={0} />% less)
               </div>
@@ -238,7 +238,7 @@ export default function DosageTrackerCard({
             </span>
             <span
               className={`font-mono font-bold text-xs flex items-center space-x-1 ${
-                whoPercentage <= 50 ? "text-emerald-400" : whoPercentage <= 100 ? "text-amber-400" : "text-rose-400"
+                whoPercentage <= 50 ? "text-emerald-cyber-400" : whoPercentage <= 100 ? "text-amber-400" : "text-crimson-neon-400"
               }`}
             >
               <AnimatedCounter value={whoPercentage} precision={0} />
@@ -246,13 +246,19 @@ export default function DosageTrackerCard({
             </span>
           </div>
 
-          <div className="relative w-full h-3 rounded-full bg-slate-900 overflow-hidden border border-slate-800">
+          <div className="relative w-full h-3 rounded-full bg-obsidian-950 overflow-hidden border border-white/10">
             {/* 100% Marker Line */}
-            <div className="absolute top-0 bottom-0 left-full -ml-0.5 w-0.5 bg-rose-500/60 z-10" />
+            <div className="absolute top-0 bottom-0 left-full -ml-0.5 w-0.5 bg-crimson-neon-500/60 z-10" />
 
-            {/* Spring-animated Filled Bar */}
+            {/* Spring-animated Gradient Filled Bar */}
             <motion.div
-              className={`h-full rounded-full shadow-lg ${risk.barClass}`}
+              className={`h-full rounded-full shadow-lg ${
+                whoPercentage <= 50
+                  ? "bg-gradient-to-r from-emerald-cyber-500 to-cyan-electric-400 shadow-glow-emerald"
+                  : whoPercentage <= 100
+                  ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                  : "bg-gradient-to-r from-crimson-neon-500 to-rose-600 shadow-glow-crimson"
+              }`}
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(whoPercentage, 100)}%` }}
               transition={{
@@ -266,25 +272,25 @@ export default function DosageTrackerCard({
           <div className="flex justify-between text-[10px] text-slate-500 font-mono pt-0.5">
             <span>0 µg (Pristine)</span>
             <span>{whoBudget * 0.5} µg (50%)</span>
-            <span className="text-rose-400">{whoBudget} µg (WHO Cap)</span>
+            <span className="text-crimson-neon-400">{whoBudget} µg (WHO Cap)</span>
           </div>
         </div>
 
         {/* Exposure Parameters Breakdown with Animated Spring Numbers */}
-        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800/80 text-[11px] font-mono">
-          <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-[11px] font-mono">
+          <div className="p-2.5 rounded-xl bg-obsidian-950/80 border border-white/10">
             <div className="text-[10px] text-slate-500">Avg PM2.5</div>
-            <div className="font-bold text-cyan-300">
+            <div className="font-bold text-cyan-electric-400">
               <AnimatedCounter value={pm25Concentration} precision={1} suffix=" µg/m³" />
             </div>
           </div>
-          <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
+          <div className="p-2.5 rounded-xl bg-obsidian-950/80 border border-white/10">
             <div className="text-[10px] text-slate-500">Air Inhaled</div>
             <div className="font-bold text-slate-200">
               <AnimatedCounter value={airVolumeM3} precision={2} suffix=" m³" />
             </div>
           </div>
-          <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
+          <div className="p-2.5 rounded-xl bg-obsidian-950/80 border border-white/10">
             <div className="text-[10px] text-slate-500">Commute Time</div>
             <div className="font-bold text-slate-200">{durationMinutes * tripMultiplier} mins</div>
           </div>
@@ -292,11 +298,11 @@ export default function DosageTrackerCard({
       </div>
 
       {/* Advisory Health Shield Tip */}
-      <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 flex items-start space-x-2.5 text-xs text-slate-300">
-        <Sparkles className="h-4 w-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+      <div className="p-3.5 rounded-xl glass-card border-white/10 flex items-start space-x-2.5 text-xs text-slate-300">
+        <Sparkles className="h-4 w-4 text-emerald-cyber-400 flex-shrink-0 mt-0.5" />
         <div className="space-y-0.5">
           <span className="font-semibold text-white">Health Protection Impact:</span>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-slate-400 leading-relaxed">
             {isCleanRoute
               ? `Routing through the Eco-Shield Corridor prevents ${dosageSavedUg.toFixed(1)} µg of deep alveolar particulate deposition compared to standard highway transit.`
               : `High particulate inhalation detected along arterial corridors. Consider switching to the Eco-Shield Green Route to reduce dosage by ${dosageReductionPct}%.`}

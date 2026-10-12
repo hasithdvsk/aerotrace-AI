@@ -62,21 +62,20 @@ export default function CitizenPortalPage() {
   const handleRouteSelection = (routeData: RouteSelectionData) => {
     setSelectedRoute(routeData);
   };
-
   return (
-    <div className="min-h-screen bg-[#070b12] text-slate-100 flex flex-col font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
+    <div className="min-h-screen cyber-grid-bg text-slate-100 flex flex-col font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
       {/* Top Citizen Header Bar */}
-      <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-40 px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <header className="border-b border-white/10 glass-card bg-obsidian-950/80 backdrop-blur-2xl sticky top-0 z-40 px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 text-emerald-400 shadow-lg shadow-emerald-950/50">
+          <div className="p-2.5 rounded-xl bg-emerald-cyber-500/15 border border-emerald-cyber-500/40 text-emerald-cyber-400 shadow-glow-emerald">
             <Leaf className="h-6 w-6" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-lg font-bold text-white tracking-tight">
+              <h1 className="text-lg font-black tracking-tight text-gradient-emerald">
                 AeroTrace Citizen Portal
               </h1>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono">
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-cyber-500/20 text-emerald-cyber-300 border border-emerald-cyber-500/40 font-mono shadow-glow-emerald">
                 COMMUTER ECO-SHIELD
               </span>
             </div>
@@ -90,15 +89,15 @@ export default function CitizenPortalPage() {
         <div className="flex items-center space-x-2.5">
           <Link
             href="/"
-            className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-medium transition flex items-center space-x-1.5"
+            className="px-3 py-1.5 rounded-xl glass-card hover:border-emerald-cyber-500/30 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold transition flex items-center space-x-1.5"
           >
-            <BarChart3 className="h-3.5 w-3.5 text-cyan-400" />
+            <BarChart3 className="h-3.5 w-3.5 text-cyan-electric-400" />
             <span>Overview</span>
           </Link>
 
           <Link
             href="/dashboard"
-            className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-medium transition flex items-center space-x-1.5"
+            className="px-3 py-1.5 rounded-xl glass-card hover:border-crimson-neon-500/30 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold transition flex items-center space-x-1.5"
           >
             <Building2 className="h-3.5 w-3.5 text-amber-400" />
             <span>Government Portal</span>
@@ -109,20 +108,20 @@ export default function CitizenPortalPage() {
       {/* Main Citizen Application Workspace */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 space-y-6">
         {/* Commuter Status Ribbon */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-teal-950/30 border border-emerald-800/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-4 rounded-2xl glass-card border-emerald-cyber-500/30 shadow-glow-emerald flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="p-2 rounded-xl bg-emerald-cyber-500/15 text-emerald-cyber-400 border border-emerald-cyber-500/30">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
               <div className="text-xs font-bold text-white flex items-center space-x-2">
                 <span>Active Commute: {selectedRoute.routeName}</span>
                 {selectedRoute.isCleanest ? (
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-cyber-500/20 text-emerald-cyber-300 border border-emerald-cyber-500/40 font-mono font-bold">
                     CLEANEST ROUTE ACTIVE
                   </span>
                 ) : (
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-mono">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-obsidian-800 text-slate-300 border border-white/10 font-mono">
                     STANDARD ROUTE ACTIVE
                   </span>
                 )}
@@ -139,11 +138,11 @@ export default function CitizenPortalPage() {
 
           <div className="flex items-center space-x-3">
             {selectedRoute.isCleanest && (
-              <div className="px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-700/60 text-right">
-                <span className="text-[10px] text-emerald-400 uppercase font-mono block">
+              <div className="px-3.5 py-1.5 rounded-xl glass-card border-emerald-cyber-500/40 shadow-glow-emerald text-right">
+                <span className="text-[10px] text-emerald-cyber-400 uppercase font-mono font-semibold block">
                   Pollution Exposure Reduction
                 </span>
-                <span className="text-base font-extrabold text-emerald-300 font-mono">
+                <span className="text-base font-extrabold text-emerald-cyber-300 font-mono">
                   -{selectedRoute.exposureSavingsPercent || 38}% Saved
                 </span>
               </div>
@@ -155,14 +154,14 @@ export default function CitizenPortalPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column: CleanestRouteMap Component (Col 1 to 7) */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden shadow-xl">
-              <div className="p-3.5 border-b border-slate-800 bg-slate-950/40 flex items-center justify-between">
+            <div className="rounded-2xl glass-card border-white/10 overflow-hidden shadow-2xl">
+              <div className="p-3.5 border-b border-white/10 bg-obsidian-950/40 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <Navigation2 className="h-4 w-4 text-emerald-400" />
-                  <span className="text-sm font-bold text-white">Interactive Mapbox GL JS Navigation</span>
+                  <Navigation2 className="h-4 w-4 text-emerald-cyber-400" />
+                  <span className="text-sm font-bold text-white font-mono">Interactive Mapbox GL JS Navigation</span>
                 </div>
                 <span className="text-[11px] font-mono text-slate-400">
-                  PostGIS <code className="text-cyan-300">street_aqi_grid</code> Integration
+                  PostGIS <code className="text-cyan-electric-400 font-mono">street_aqi_grid</code> Integration
                 </span>
               </div>
 
@@ -184,25 +183,27 @@ export default function CitizenPortalPage() {
             />
 
             {/* 2. Urban Air Quality & Protective Inhalation Advisory */}
-            <div className="rounded-2xl bg-slate-900/60 border border-slate-800 p-4 space-y-3 text-xs">
-              <div className="flex items-center justify-between font-semibold text-white">
-                <span className="flex items-center space-x-1.5">
-                  <Activity className="h-4 w-4 text-cyan-400" />
-                  <span>Commuter Respiratory Defense System</span>
+            <div className="rounded-2xl glass-card border-white/10 p-5 space-y-3.5 text-xs">
+              <div className="flex items-center justify-between font-bold text-white">
+                <span className="flex items-center space-x-2">
+                  <Activity className="h-4 w-4 text-cyan-electric-400" />
+                  <span className="text-gradient-emerald">Commuter Respiratory Defense System</span>
                 </span>
-                <span className="text-[10px] text-emerald-400 font-mono">ACTIVE PROTOCOL</span>
+                <span className="text-[10px] text-emerald-cyber-400 font-mono border border-emerald-cyber-500/30 px-2 py-0.5 rounded-full bg-emerald-cyber-500/10">
+                  ACTIVE PROTOCOL
+                </span>
               </div>
 
               <div className="space-y-2 text-slate-300 text-[11px] leading-relaxed">
-                <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-start space-x-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
+                <div className="p-3 rounded-xl bg-obsidian-950/80 border border-white/10 flex items-start space-x-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-cyber-400 mt-1.5 flex-shrink-0 shadow-glow-emerald" />
                   <div>
                     <strong className="text-white">Alveolar Particulate Deposition:</strong> Choosing urban corridors through tree-lined buffers reduces fine particulate intake by up to 40% compared to highway central lanes.
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-start space-x-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 flex-shrink-0" />
+                <div className="p-3 rounded-xl bg-obsidian-950/80 border border-white/10 flex items-start space-x-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-electric-400 mt-1.5 flex-shrink-0" />
                   <div>
                     <strong className="text-white">Active Cycling & Walking Mode:</strong> Inhaling air during elevated aerobic exercise triples your minute ventilation rate (1.92 m³/h vs 0.54 m³/h in a car). Clean routing is especially critical for cyclists and runners.
                   </div>
@@ -214,11 +215,11 @@ export default function CitizenPortalPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-950 py-5 text-xs text-slate-500 mt-10">
+      <footer className="border-t border-white/10 glass-card bg-obsidian-950/90 py-5 text-xs text-slate-400 mt-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center space-x-2">
-            <Leaf className="h-4 w-4 text-emerald-400" />
-            <span className="font-semibold text-slate-300">AeroTrace Citizen Portal</span>
+            <Leaf className="h-4 w-4 text-emerald-cyber-400" />
+            <span className="font-bold text-slate-200">AeroTrace Citizen Portal</span>
             <span>• Hyperlocal Clean Air Navigation</span>
           </div>
           <div className="font-mono text-slate-400 text-[11px]">
@@ -229,3 +230,4 @@ export default function CitizenPortalPage() {
     </div>
   );
 }
+

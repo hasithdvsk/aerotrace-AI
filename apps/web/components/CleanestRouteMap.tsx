@@ -450,20 +450,20 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
   };
 
   return (
-    <div className="relative w-full h-[850px] rounded-2xl overflow-hidden border border-slate-800 bg-[#0b0f19] text-slate-100 flex flex-col lg:flex-row shadow-2xl">
+    <div className="relative w-full h-[850px] rounded-2xl overflow-hidden glass-card border border-white/10 bg-obsidian-950/90 text-slate-100 flex flex-col lg:flex-row shadow-2xl">
       {/* Left Control & Analytics Panel */}
-      <div className="w-full lg:w-[420px] bg-slate-900/90 backdrop-blur-xl border-b lg:border-b-0 lg:border-r border-slate-800/80 p-5 flex flex-col justify-between overflow-y-auto custom-scrollbar z-20">
+      <div className="w-full lg:w-[420px] bg-obsidian-900/80 backdrop-blur-2xl border-b lg:border-b-0 lg:border-r border-white/10 p-5 flex flex-col justify-between overflow-y-auto custom-scrollbar z-20">
         <div className="space-y-5">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="h-9 w-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="h-9 w-9 rounded-xl bg-emerald-500/10 border border-emerald-cyber-500/40 shadow-glow-emerald flex items-center justify-center text-emerald-cyber-400">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
                 <h3 className="font-bold text-base text-white tracking-tight flex items-center space-x-1.5">
-                  <span>Cleanest Route Engine</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-normal">
+                  <span className="text-gradient-emerald">Cleanest Route Engine</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-cyber-400 font-mono font-medium border border-emerald-cyber-500/30">
                     PostGIS Grid
                   </span>
                 </h3>
@@ -474,7 +474,7 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
             <button
               onClick={() => setShowTokenInput(!showTokenInput)}
               title="Mapbox Token Configuration"
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition"
+              className="p-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-slate-400 hover:text-white transition border border-white/10"
             >
               <Key className="h-4 w-4" />
             </button>
@@ -601,26 +601,26 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
                   <div
                     key={r.id}
                     onClick={() => selectRoute(r)}
-                    className={`cursor-pointer p-3.5 rounded-xl border transition ${
+                    className={`cursor-pointer p-3.5 rounded-xl border transition duration-200 ${
                       isCleanest
-                        ? "bg-emerald-950/20 border-emerald-500/50 hover:bg-emerald-950/30 ring-1 ring-emerald-500/20"
+                        ? "bg-emerald-cyber-500/10 border-emerald-cyber-500/60 shadow-glow-emerald hover:bg-emerald-cyber-500/15 ring-1 ring-emerald-cyber-500/30"
                         : isSelected
-                        ? "bg-slate-800/80 border-slate-600"
-                        : "bg-slate-950/50 border-slate-800 hover:border-slate-700"
+                        ? "bg-obsidian-800/90 border-cyan-electric-500/50"
+                        : "bg-obsidian-950/60 border-white/10 hover:border-white/20"
                     }`}
                   >
                     <div className="flex items-start justify-between mb-1.5">
                       <div>
                         <div className="flex items-center space-x-1.5">
                           {isCleanest && (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-bold text-[10px] uppercase tracking-wider flex items-center space-x-1">
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-cyber-500 text-obsidian-950 font-black font-mono text-[10px] uppercase tracking-wider flex items-center space-x-1">
                               <Sparkles className="h-3 w-3" />
                               <span>CLEANEST</span>
                             </span>
                           )}
                           <span className="font-semibold text-xs text-white">{r.name}</span>
                         </div>
-                        <div className="text-[11px] text-slate-400 flex items-center space-x-3 mt-1">
+                        <div className="text-[11px] font-mono text-slate-400 flex items-center space-x-3 mt-1">
                           <span>{r.distanceKm} km</span>
                           <span>•</span>
                           <span>{r.durationMinutes} mins</span>
@@ -629,10 +629,10 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
                         </div>
                       </div>
 
-                      <div className="text-right">
+                      <div className="text-right font-mono">
                         <div
-                          className={`text-base font-black font-mono ${
-                            isCleanest ? "text-emerald-400" : "text-amber-400"
+                          className={`text-base font-black ${
+                            isCleanest ? "text-emerald-cyber-400" : "text-amber-400"
                           }`}
                         >
                           {r.cumulativeExposureScore}
@@ -644,14 +644,14 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
                     </div>
 
                     {/* Clean Air Metric Bar */}
-                    <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px]">
-                      <span className="text-slate-400 flex items-center space-x-1">
-                        <Wind className="h-3 w-3 text-cyan-400" />
-                        <span>Average AQI: <strong className="text-slate-200">{r.averageAqi}</strong></span>
+                    <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 font-mono flex items-center space-x-1">
+                        <Wind className="h-3 w-3 text-cyan-electric-400" />
+                        <span>Average AQI: <strong className="text-slate-100">{r.averageAqi}</strong></span>
                       </span>
 
                       {isCleanest && r.exposureSavingsPercent && (
-                        <span className="text-emerald-400 font-medium flex items-center space-x-1 text-[11px]">
+                        <span className="text-emerald-cyber-400 font-mono font-medium flex items-center space-x-1 text-[11px]">
                           <TrendingDown className="h-3 w-3" />
                           <span>-{r.exposureSavingsPercent}% Exposure</span>
                         </span>
@@ -665,11 +665,11 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
         </div>
 
         {/* Action Button */}
-        <div className="pt-4 border-t border-slate-800">
+        <div className="pt-4 border-t border-white/10">
           <button
             onClick={() => calculateAndEvaluateRoutes(startCoords, destCoords)}
             disabled={loading}
-            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-slate-950 font-bold text-xs flex items-center justify-center space-x-2 transition shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-cyber-500 to-cyan-electric-500 hover:from-emerald-cyber-400 hover:to-cyan-electric-400 text-obsidian-950 font-black text-xs flex items-center justify-center space-x-2 transition shadow-glow-emerald disabled:opacity-50"
           >
             <Navigation2 className="h-4 w-4" />
             <span>{loading ? "Calculating PostGIS Exposure..." : "Recalculate Clean Routes"}</span>
@@ -678,76 +678,76 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
       </div>
 
       {/* Right Map Canvas Panel */}
-      <div className="relative flex-1 h-full w-full bg-slate-950">
+      <div className="relative flex-1 h-full w-full bg-obsidian-950">
         <div ref={mapContainerRef} className="absolute inset-0 h-full w-full" />
 
         {/* Floating Commuter Route Switcher & Exposure Overlay */}
         {cleanestRoute && (
-          <div className="absolute top-4 left-4 right-4 sm:right-auto sm:max-w-md z-10 p-3.5 rounded-xl bg-slate-900/95 backdrop-blur-md border border-slate-700/80 shadow-2xl space-y-2.5">
+          <div className="absolute top-4 left-4 right-4 sm:right-auto sm:max-w-md z-10 p-4 rounded-2xl glass-card border-white/10 shadow-2xl space-y-3">
             {/* Commuter Quick Route Switcher Toggle */}
-            <div className="flex p-1 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+            <div className="flex p-1 rounded-xl bg-obsidian-950/80 border border-white/10 text-xs">
               <button
                 onClick={() => selectRoute(cleanestRoute)}
-                className={`flex-1 py-1.5 px-2.5 rounded-lg font-bold transition flex items-center justify-center space-x-1.5 ${
+                className={`flex-1 py-1.5 px-2.5 rounded-lg font-bold font-mono transition flex items-center justify-center space-x-1.5 ${
                   selectedRouteId === cleanestRoute.id || !selectedRouteId
-                    ? "bg-emerald-600 text-white shadow-md shadow-emerald-950"
+                    ? "bg-emerald-cyber-500 text-obsidian-950 shadow-glow-emerald"
                     : "text-slate-400 hover:text-slate-200"
                 }`}
               >
-                <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-                <span>Cleanest Route (#10B981)</span>
+                <span className="h-2 w-2 rounded-full bg-emerald-cyber-400"></span>
+                <span>Cleanest Route</span>
               </button>
               <button
                 onClick={() => {
                   const alt = routes.find((r) => !r.isCleanest);
                   if (alt) selectRoute(alt);
                 }}
-                className={`flex-1 py-1.5 px-2.5 rounded-lg font-bold transition flex items-center justify-center space-x-1.5 ${
+                className={`flex-1 py-1.5 px-2.5 rounded-lg font-bold font-mono transition flex items-center justify-center space-x-1.5 ${
                   selectedRouteId && selectedRouteId !== cleanestRoute.id
-                    ? "bg-slate-700 text-white shadow-md"
+                    ? "bg-obsidian-800 text-white shadow-md border border-white/10"
                     : "text-slate-400 hover:text-slate-200"
                 }`}
               >
-                <span className="h-2 w-2 rounded-full bg-gray-400"></span>
-                <span>Standard Route (#6B7280)</span>
+                <span className="h-2 w-2 rounded-full bg-slate-400"></span>
+                <span>Standard Route</span>
               </button>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="flex items-center space-x-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wide">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span className="flex items-center space-x-1.5 text-xs font-bold text-emerald-cyber-400 uppercase tracking-wide">
+                <span className="h-2 w-2 rounded-full bg-emerald-cyber-400 animate-ping"></span>
                 <span>Eco-Shield Navigation</span>
               </span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-cyber-500/20 text-emerald-cyber-300 font-bold border border-emerald-cyber-500/30">
                 -{cleanestRoute.exposureSavingsPercent || 28}% Inhalation
               </span>
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed">
-              Evaluating routes against <code className="text-cyan-300 font-mono">street_aqi_grid</code> confirms this path avoids the high PM2.5 corridor, routing through urban green buffers.
+              Evaluating routes against <code className="text-cyan-electric-400 font-mono">street_aqi_grid</code> confirms this path avoids the high PM2.5 corridor, routing through urban green buffers.
             </p>
 
-            <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800">
-              <span>Avg AQI: <strong className="text-emerald-300">{cleanestRoute.averageAqi}</strong></span>
+            <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-1 border-t border-white/10">
+              <span>Avg AQI: <strong className="text-emerald-cyber-300">{cleanestRoute.averageAqi}</strong></span>
               <span>Distance: <strong className="text-white">{cleanestRoute.distanceKm} km</strong></span>
-              <span>Exposure Score: <strong className="text-emerald-300">{cleanestRoute.cumulativeExposureScore}</strong></span>
+              <span>Exposure: <strong className="text-emerald-cyber-300">{cleanestRoute.cumulativeExposureScore}</strong></span>
             </div>
           </div>
         )}
 
         {/* Map Legend */}
-        <div className="absolute bottom-4 right-4 z-10 p-3 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-800 text-[11px] space-y-1.5 text-slate-300 shadow-lg">
-          <div className="font-semibold text-white text-xs mb-1">Exposure Legend</div>
+        <div className="absolute bottom-4 right-4 z-10 p-3.5 rounded-xl glass-card border-white/10 text-[11px] space-y-1.5 text-slate-300 shadow-xl">
+          <div className="font-bold text-white text-xs mb-1 uppercase tracking-wider font-mono">Exposure Legend</div>
           <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-6 rounded-full bg-emerald-500"></span>
+            <span className="h-2.5 w-6 rounded-full bg-emerald-cyber-500"></span>
             <span>Cleanest Route (Lowest AQI Exposure)</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-6 rounded-full bg-amber-500 opacity-60"></span>
+            <span className="h-2.5 w-6 rounded-full bg-amber-500 opacity-70"></span>
             <span>Alternate Route (Moderate Exposure)</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-6 rounded-full bg-rose-500 opacity-60"></span>
+            <span className="h-2.5 w-6 rounded-full bg-crimson-neon-500 opacity-80"></span>
             <span>High Pollution Highway Corridor</span>
           </div>
         </div>
