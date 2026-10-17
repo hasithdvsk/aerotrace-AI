@@ -109,51 +109,60 @@ export default function HotspotMap({
     <div
       className={`relative w-full h-[620px] rounded-3xl overflow-hidden glass-card border border-white/10 bg-obsidian-950/90 text-slate-100 flex flex-col shadow-2xl ${className}`}
     >
-      {/* Top Floating HUD Controls */}
-      <div className="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
-        <div className="pointer-events-auto flex items-center space-x-2.5 p-2 rounded-2xl glass-card border-white/10 backdrop-blur-2xl shadow-xl">
-          <div className="p-2 rounded-xl bg-crimson-neon-500/15 border border-crimson-neon-500/40 text-crimson-neon-400 shadow-glow-crimson">
-            <Flame className="h-5 w-5 animate-pulse" />
+      {/* Top Floating Overlays Container */}
+      {/* 1. Layer Classification Floating Glass Overlay (Top-Left) */}
+      <div className="absolute top-4 left-4 z-10 glass-card p-3 border border-white/10 max-w-xs shadow-xl backdrop-blur-md bg-obsidian-900/80 space-y-2 text-[11px] font-mono text-slate-300">
+        <div className="font-bold text-white text-xs uppercase tracking-wider flex items-center justify-between border-b border-white/10 pb-1.5">
+          <span>Layer Classification</span>
+          <Layers className="h-3.5 w-3.5 text-cyan-electric-400" />
+        </div>
+        <div className="space-y-1.5">
+          <div className="flex items-center space-x-2">
+            <span className="h-2.5 w-5 rounded-full bg-crimson-neon-500 shadow-glow-crimson flex-shrink-0" />
+            <span className="truncate">Critical Plume (&gt;300% Exceedance)</span>
           </div>
-          <div>
-            <div className="text-xs font-bold text-white flex items-center space-x-2">
-              <span className="text-gradient-satellite">Industrial Emissions Plume Tracker</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-crimson-neon-500/20 text-crimson-neon-300 font-mono font-bold border border-crimson-neon-500/40">
-                LIVE POSTGIS GI-ST
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400">
-              Sentinel-5P NO₂ tropospheric column macro-layer × LoRaWAN transit mesh
-            </p>
+          <div className="flex items-center space-x-2">
+            <span className="h-2.5 w-5 rounded-full bg-violet-satellite-500 shadow-glow-violet opacity-80 flex-shrink-0" />
+            <span className="truncate">Sentinel-5P NO₂ Swath</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="h-2.5 w-5 rounded-full bg-emerald-cyber-500 shadow-glow-emerald flex-shrink-0" />
+            <span className="truncate">Transit Bus LoRaWAN Mesh</span>
           </div>
         </div>
+      </div>
 
-        {/* Layer Toggle Pills */}
-        <div className="pointer-events-auto flex items-center space-x-2">
-          <button
-            onClick={() => setShowSatelliteLayer(!showSatelliteLayer)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold flex items-center space-x-1.5 transition border ${
-              showSatelliteLayer
-                ? "bg-violet-satellite-500/20 text-violet-satellite-300 border-violet-satellite-500/50 shadow-glow-violet"
-                : "bg-obsidian-900/80 text-slate-400 border-white/10 hover:text-slate-200"
-            }`}
-          >
-            <Satellite className="h-3.5 w-3.5" />
-            <span>Sentinel-5P Layer</span>
-          </button>
-
-          <button
-            onClick={() => setShowTransitMesh(!showTransitMesh)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold flex items-center space-x-1.5 transition border ${
-              showTransitMesh
-                ? "bg-emerald-cyber-500/20 text-emerald-cyber-300 border-emerald-cyber-500/50 shadow-glow-emerald"
-                : "bg-obsidian-900/80 text-slate-400 border-white/10 hover:text-slate-200"
-            }`}
-          >
-            <Radio className="h-3.5 w-3.5" />
-            <span>Transit Fleet Mesh</span>
-          </button>
+      {/* 2. Top-Right HUD Controls & Layer Toggle Pills */}
+      <div className="absolute top-4 right-4 z-10 flex flex-wrap items-center justify-end gap-2.5 pointer-events-auto">
+        <div className="hidden sm:flex items-center space-x-2 p-1.5 px-3 rounded-xl glass-card border-white/10 backdrop-blur-md bg-obsidian-900/80 shadow-lg text-xs font-mono">
+          <Flame className="h-3.5 w-3.5 text-crimson-neon-400 animate-pulse" />
+          <span className="text-[10px] text-crimson-neon-300 font-bold">LIVE POSTGIS GI-ST</span>
         </div>
+
+        <button
+          onClick={() => setShowSatelliteLayer(!showSatelliteLayer)}
+          data-cursor="INSPECT"
+          className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold flex items-center space-x-1.5 transition border backdrop-blur-md ${
+            showSatelliteLayer
+              ? "bg-violet-satellite-500/20 text-violet-satellite-300 border-violet-satellite-500/50 shadow-glow-violet"
+              : "bg-obsidian-900/80 text-slate-400 border-white/10 hover:text-slate-200"
+          }`}
+        >
+          <Satellite className="h-3.5 w-3.5" />
+          <span>Sentinel-5P</span>
+        </button>
+
+        <button
+          onClick={() => setShowTransitMesh(!showTransitMesh)}
+          className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold flex items-center space-x-1.5 transition border backdrop-blur-md ${
+            showTransitMesh
+              ? "bg-emerald-cyber-500/20 text-emerald-cyber-300 border-emerald-cyber-500/50 shadow-glow-emerald"
+              : "bg-obsidian-900/80 text-slate-400 border-white/10 hover:text-slate-200"
+          }`}
+        >
+          <Radio className="h-3.5 w-3.5" />
+          <span>Transit Mesh</span>
+        </button>
       </div>
 
       {/* Main Spatial Map Visualizer Canvas */}
@@ -408,25 +417,6 @@ export default function HotspotMap({
             </div>
           </motion.div>
         )}
-
-        {/* Legend */}
-        <div className="absolute bottom-4 right-4 z-20 p-3.5 rounded-xl glass-card border-white/10 text-[11px] font-mono space-y-1.5 text-slate-300">
-          <div className="font-bold text-white text-xs mb-1 uppercase tracking-wider">
-            Layer Classification
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-6 rounded-full bg-crimson-neon-500 shadow-glow-crimson" />
-            <span>Critical Industrial Plume (&gt;300% Exceedance)</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-6 rounded-full bg-violet-satellite-500 shadow-glow-violet opacity-80" />
-            <span>Sentinel-5P TROPOMI NO₂ Swath</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-6 rounded-full bg-emerald-cyber-500 shadow-glow-emerald" />
-            <span>Transit Bus LoRaWAN Mobile Mesh</span>
-          </div>
-        </div>
       </div>
     </div>
   );
