@@ -99,3 +99,20 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(16, 185, 129, 0.6);
 }
+
+/* Custom Follower Cursor - Hide native cursor on desktop devices while preserving mobile touch interactions */
+@media (min-width: 768px) {
+  body,
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  label,
+  [role="button"],
+  [data-cursor],
+  .mapboxgl-canvas,
+  .mapboxgl-map {
+    cursor: none !important;
+  }
+}

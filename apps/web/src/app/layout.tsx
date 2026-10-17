@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/animations/SmoothScrollProvider";
+import CustomCursor from "@/components/animations/CustomCursor";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#030712] font-sans text-slate-100 selection:bg-emerald-500/30 selection:text-emerald-200">
         <SmoothScrollProvider>
+          <CustomCursor />
           {children}
         </SmoothScrollProvider>
       </body>

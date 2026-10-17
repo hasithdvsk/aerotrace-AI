@@ -601,6 +601,7 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
                   <div
                     key={r.id}
                     onClick={() => selectRoute(r)}
+                    data-cursor="NAVIGATE"
                     className={`cursor-pointer p-3.5 rounded-xl border transition duration-200 ${
                       isCleanest
                         ? "bg-emerald-cyber-500/10 border-emerald-cyber-500/60 shadow-glow-emerald hover:bg-emerald-cyber-500/15 ring-1 ring-emerald-cyber-500/30"
@@ -678,8 +679,8 @@ export default function CleanestRouteMap({ onRouteSelect, className = "" }: Clea
       </div>
 
       {/* Right Map Canvas Panel */}
-      <div className="relative flex-1 h-full w-full bg-obsidian-950">
-        <div ref={mapContainerRef} className="absolute inset-0 h-full w-full" />
+      <div className="relative flex-1 h-full w-full bg-obsidian-950" data-cursor="NAVIGATE">
+        <div ref={mapContainerRef} data-cursor="NAVIGATE" className="absolute inset-0 h-full w-full" />
 
         {/* Floating Commuter Route Switcher & Exposure Overlay */}
         {cleanestRoute && (

@@ -195,7 +195,7 @@ export default function DosageTrackerCard({
       </div>
 
       {/* Dosage Metrics Display Card */}
-      <div className="p-5 rounded-2xl glass-card border-white/10 space-y-4">
+      <div className="p-5 rounded-2xl glass-card border-white/10 space-y-4" data-cursor="DOSAGE">
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div>
             <div className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
